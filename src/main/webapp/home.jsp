@@ -1,3 +1,5 @@
+<%@page import="org.example.model.Posts"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <!DOCTYPE html>
@@ -206,6 +208,12 @@
         <body>
             <div class="header">
                 <h1>Trang chủ</h1>
+                <div>
+                	<form>
+	                	<input type="text" name="search_query" placeholder="Nhập tên bài viết..." />
+	                	<button>Search</button>
+                	</form>
+                </div>
                 <div class="user-info">
                     <a href="${pageContext.request.contextPath}/follows/following" class="btn"
                         style="margin-right: 10px; text-decoration: none; color: #000;">
@@ -240,60 +248,71 @@
 
                 <!-- Danh sách bài viết -->
                 <div class="post-list">
-                    <c:forEach items="${posts}" var="post">
-                        <div class="post-card">
-                            <div class="post-header">
-                                <div class="post-meta">
-                                    <div class="post-author">
-                                        <i class="fas fa-user"></i>
-                                        <span>Người dùng: ${post.user.username}</span>
-                                        <c:if test="${sessionScope.user != null and sessionScope.user.id != post.user.id}">
-                                            <button onclick="toggleFollow('${post.user.id}')"
-                                                class="btn-follow ${post.user.followedByCurrentUser ? 'following' : ''}"
-                                                id="follow-btn-${post.user.id}">
-                                                <c:choose>
-                                                    <c:when test="${post.user.followedByCurrentUser}">
-                                                        <i class="fas fa-user-minus"></i> Bỏ theo dõi
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <i class="fas fa-user-plus"></i> Theo dõi
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </button>
-                                        </c:if>
-                                    </div>
-                                    <div class="post-date">
-                                        <i class="far fa-clock"></i>
-                                        <fmt:parseDate value="${post.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss"
-                                            var="parsedDate" type="both" />
-                                        <span>
-                                            <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy HH:mm" />
-                                        </span>
-                                    </div>
-                                </div>
-                                <c:if test="${sessionScope.user.id == post.user.id}">
-                                    <div class="post-actions">
-                                        <form action="post/edit" method="get" style="display: inline;">
-                                            <input type="hidden" name="postId" value="${post.id}">
-                                            <button type="submit" class="btn btn-edit">
-                                                <i class="fas fa-edit"></i> Sửa
-                                            </button>
-                                        </form>
-                                        <!-- Xóa bài viết -->
-                                        <!-- Form không hỗ trợ DELETE nên dùng fetch để xóa -->
-
-                                        <button type="button" class="btn btn-delete" onclick="deletePost('${post.id}')">
-                                            <i class="fas fa-trash-alt"></i> Xóa
-                                        </button>
-                                    </div>
-                                </c:if>
-                            </div>
-                            <h3 class="post-title">${post.title}</h3>
-                            <div class="post-content">
-                                <p>${post.body}</p>
-                            </div>
-                        </div>
-                    </c:forEach>
+                    <c:if test="${posts != null}">
+	                    <c:forEach items="${posts}" var="post">
+	                        <div class="post-card">
+	                            <div class="post-header">
+	                                <div class="post-meta">
+	                                    <div class="post-author">
+	                                        <i class="fas fa-user"></i>
+	                                        <span>Người dùng: ${post.user.username}</span>
+	                                        <c:if test="${sessionScope.user != null and sessionScope.user.id != post.user.id}">
+	                                            <button onclick="toggleFollow('${post.user.id}')"
+	                                                class="btn-follow ${post.user.followedByCurrentUser ? 'following' : ''}"
+	                                                id="follow-btn-${post.user.id}">
+	                                                <c:choose>
+	                                                    <c:when test="${post.user.followedByCurrentUser}">
+	                                                        <i class="fas fa-user-minus"></i> Bỏ theo dõi
+	                                                    </c:when>
+	                                                    <c:otherwise>
+	                                                        <i class="fas fa-user-plus"></i> Theo dõi
+	                                                    </c:otherwise>
+	                                                </c:choose>
+	                                            </button>
+	                                        </c:if>
+	                                    </div>
+	                                    <div class="post-date">
+	                                        <i class="far fa-clock"></i>
+	                                        <fmt:parseDate value="${post.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+	                                            var="parsedDate" type="both" />
+	                                        <span>
+	                                            <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy HH:mm" />
+	                                        </span>
+	                                    </div>
+	                                </div>
+	                                <c:if test="${sessionScope.user.id == post.user.id}">
+	                                    <div class="post-actions">
+	                                        <form action="post/edit" method="get" style="display: inline;">
+	                                            <input type="hidden" name="postId" value="${post.id}">
+	                                            <button type="submit" class="btn btn-edit">
+	                                                <i class="fas fa-edit"></i> Sửa
+	                                            </button>
+	                                        </form>
+	                                        <!-- Xóa bài viết -->
+	                                        <!-- Form không hỗ trợ DELETE nên dùng fetch để xóa -->
+	
+	                                        <button type="button" class="btn btn-delete" onclick="deletePost('${post.id}')">
+	                                            <i class="fas fa-trash-alt"></i> Xóa
+	                                        </button>
+	                                    </div>
+	                                </c:if>
+	                            </div>
+	                            <h3 class="post-title">${post.title}</h3>
+	                            <div class="post-content">
+	                                <p>${post.body}</p>
+	                            </div>
+	                        </div>
+	                    </c:forEach>
+                    </c:if>
+                    
+                    <%
+                    	List<Posts> posts = (List<Posts>) request.getAttribute("posts");
+                    	if (posts == null || posts.size() == 0) {
+                    		%>
+                    			<img style="display: block; width: 100%;" src="${pageContext.request.contextPath}/img/not_found.jpg" alt="Not found" />
+                    		<%
+                    	}
+                    %>
                 </div>
 
                 <!-- Phân trang -->

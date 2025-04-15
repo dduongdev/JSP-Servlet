@@ -45,7 +45,13 @@ public class HomeServlet extends HttpServlet {
         // Ví dụ: Trang 1 -> offset = 0, Trang 2 -> offset = 5
         int offset = (page - 1) * POSTS_PER_PAGE;
         // Tác dụng: Lấy danh sách bài viết từ cơ sở dữ liệu dựa trên offset, số lượng mỗi trang, và người dùng hiện tại
-        List<Posts> posts = postsDAO.findAll(offset, POSTS_PER_PAGE, currentUser);
+        List<Posts> posts;
+        String searchQuery = request.getParameter("search_query");
+        if (searchQuery == null || searchQuery.isEmpty() || searchQuery.isBlank()) {
+        	posts = postsDAO.findAll(offset, POSTS_PER_PAGE, currentUser);
+        } else {
+        	posts = postsDAO.search(offset, POSTS_PER_PAGE, currentUser, searchQuery);
+        }
 
         // Tác dụng: Lưu danh sách bài viết vào request để truyền sang trang JSP hiển thị
         request.setAttribute("posts", posts);

@@ -12,4 +12,5 @@ public interface PostsDAO {
     void delete(Long id);
     List<Posts> findAll();
     void update(Posts post);
+    List<Posts> search(int offset, int limit, User currentUser, String searchQuery);
 }

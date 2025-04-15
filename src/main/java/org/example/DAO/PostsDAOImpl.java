@@ -168,4 +168,28 @@ public class PostsDAOImpl implements PostsDAO {
         }
         return false;
     }
+
+	@Override
+	public List<Posts> search(int offset, int limit, User currentUser, String searchQuery) {
+		List<Posts> posts = new ArrayList<>();
+        String sql = "SELECT * FROM posts WHERE status = 'ACTIVE' and title like ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        try (Connection connection = databaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+        	statement.setString(1, "%" + searchQuery + "%");
+            statement.setInt(2, limit);
+            statement.setInt(3, offset);
+            System.out.println(statement);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Posts post = mapRowToPost(resultSet);
+                if (currentUser != null && post.getUser() != null) {
+                    post.getUser().setFollowedByCurrentUser(isUserFollowing(currentUser, post.getUser()));
+                }
+                posts.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return posts;
+	}
 }
