@@ -219,7 +219,7 @@
                         style="margin-right: 10px; text-decoration: none; color: #000;">
                         <i class="fas fa-users"></i> Theo dõi
                     </a>
-                    <span>Xin chào, ${sessionScope.user.username}</span>
+                    <span><a href="${pageContext.request.contextPath}/user-info">Xin chào, ${sessionScope.user.username}</a></span>
                     <a href="${pageContext.request.contextPath}/logout" class="btn">Đăng xuất</a>
                 </div>
             </div>
